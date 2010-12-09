@@ -2,10 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "Stockr" do
 
-  def run(x)
-    Stockr.work(x)
-  end
-
   it "should add parts" do
     run("2 LM358").should eql("Done. 2x LM358")
     run("LM358").should eql("2x LM358")
@@ -66,13 +62,5 @@ describe "Stockr" do
     run("DUNNO").should eql("Not found... go shop!")
   end
 
-  it "should export txt file" do
-    Time.should_receive(:now).and_return(Time.at(1291879432))
-    run("4 LM448").should eql("Done. 4x LM448")
-    run("txt").should eql("File saved! my_stockr_10-12-09-05-23-52.txt")
-  end
-
-  it "should export to html file" do
-  end
 
 end

@@ -8,6 +8,10 @@ require 'stockr'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 
+def run(x)
+  Stockr.work(x)
+end
+
 RSpec.configure do |config|
 
   config.before(:each) do

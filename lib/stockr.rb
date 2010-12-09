@@ -25,6 +25,7 @@ module Stockr
       puts "Starting websever on port."
       require "stockr/web"
     when "shop" then print_parts(Part.missing)
+    when /load.*/ then Export.import txt[1] #ARGF
     else
       if parse.size == 1
         if parse.join =~ /#{FORMATS.join('|')}/

@@ -1,18 +1,47 @@
 = stockr
 
 
-Keep your stock up to date.
-With easy bash editing, and web view.
-Exports to a bunch of formats too.
+Keep your stock up to date with easy bash editing and web view.
+Some fancy stuff, oh, and it exports to a bunch of formats too.
 
 
 == Use
 
 
     stockr +5 LM358
+    > 5x LM358
+
     stockr -2 LM358
-    stockr LM358
     > 3x LM358
+
+    stockr LM
+    > 3x LM358
+
+
+Prices too:
+
+    stockr 10 LM7805 0.95
+    > 10x LM7805 0.95 (9.50)
+
+=== Web View
+
+    stockr web
+
+If a navigator windows doesn`t appear, try: http://localhost:4567
+
+
+=== Part Find
+
+Resistors:
+
+Supposing you got 1k and 220R resistors, when you ask for "500R" we should see:
+
+    2x 1k   Parallel
+    2x 220R Serie
+
+Alternatives ICs (TODO)
+
+This will need human linkage? Isn't there a world database for this?
 
 === Shop List
 
@@ -23,24 +52,25 @@ If stock goes under 1, shows how many of that item we need, so just ask for shop
     >2x ATMEGA8
 
 
-=== Web View
-
-     stockr web
-
-=== Import formats
-
-     stockr [file]
-
-
-
 === Export formats
 
-     stockr [format]
+Export to a bunch of formats (online someday?)
+
+    stockr [format]
 
 Available: txt, csv, pdf, html, xml.
 
 
+=== Import formats
 
+You can use the txt format as a backup store. And run:
+
+     stockr [file]
+
+To import it.
+
+
+= PT
 
 == Usar
 
@@ -50,34 +80,49 @@ sudo gem install stockr
 
 Como funfa:
 
-     stockr +5 LM358
-     stockr +2 LM1117
+    stockr +5 LM358
+    stockr +2 LM1117
 
 Dae tu vai, usa um LM em um circ:
 
-     stockr -1 LM1117
+    stockr -1 LM1117
 
 Opa, q q eu tenho de lm?
 
-      stockr LM
+    stockr LM
 
-      > 5x LM358
-      > 1x LM1117
+    > 5x LM358
+    > 1x LM1117
+
+Aceita preços também:
+
+
+    stockr 10 LM7805 0.95
+    > 10x LM7805 0.95 (9.50)
 
 
 === Shop List
-Outra opcao eh colocar coisas negativas, ou qdo chegar em valor negativo, vc chama:
 
-stockr shop
+Quando se adiciona peças negativas (stockr -5 LM7805, por exemplo),
+ou qdo uma chega em valor negativo, executando:
 
-Vem a lista de coisas faltando...
+    stockr shop
 
-Tem tb `stockr web` q abre o ffox o estoque pra editar visualmente.
+É exibida uma listagem de coisas faltando...
 
-Vc pode por preco tb e calcula tudo...
 
-Ah e tb `stockr [FORMATO]` exporta seu estoque. FORMATO podendo ser txt, csv, pdf, html.....
-Sugestoes/duvidas to ae.
+=== Interface Web
+
+    stockr web
+
+Se uma janela do navegador não abrir, visite http://localhost:4567
+
+
+=== Exportar Dados
+
+     stockr [FORMATO]
+
+Exporta seu estoque. FORMATO podendo ser txt, csv, pdf, html.....
 
 
 
