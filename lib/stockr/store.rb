@@ -20,8 +20,8 @@ module Stockr
         res.reduce({}) { |h, r| h.merge(r => db.hgetall(r)) }
       end
 
-      def write(key, value)
-        db.hset(key, :qty, value)
+      def write(key, values)
+        db.hmset(key, *values.to_a.flatten)
       end
 
       def run(coe)

@@ -30,7 +30,14 @@ describe "Stockr" do
   it "should add missing parts" do
     run("-2 LM447").should eql("Done. -2x LM447")
     run("2 LM447").should eql("Done. 0x LM447")
+  end
 
+  it "should add prices to parts" do
+    run("1 LM447 0.50").should eql("Done. 1x LM447..........................................$ 0.500")
+  end
+
+  it "should add prices to multiple parts (sum)" do
+    run("2 LM447 0.50").should eql("Done. 2x LM447..........................................$ 0.500 ($ 1.000)")
   end
 
   it "should upcase the part name" do
@@ -54,7 +61,9 @@ describe "Stockr" do
   end
 
   it "should export txt file" do
-    run("txt").should eql("File saved! stockr-")
+    Time.should_receive(:now).and_return(Time.at(1291879432))
+    run("4 LM448").should eql("Done. 4x LM448")
+    run("txt").should eql("File saved! my_stockr_10-12-09-05-23-52.txt")
   end
 
   it "should export to html file" do

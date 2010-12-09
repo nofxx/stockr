@@ -3,29 +3,40 @@
 module Stockr
 
   class Part
-    attr_reader :qty, :name
+    attr_reader :name, :qty, :price
 
-    def initialize(name, qty = 0)
+    def initialize(name, qty = 0, pr = 0)
       @name = name.upcase
       @qty = qty.to_i
+      self.price = pr
     end
 
     def save
-      Store.write(@name, @qty)
+      Store.write(name, { :qty => qty, :price => price })
     end
 
     def facts
-      "#{qty}x #{name}"
+      out = "#{qty}x #{name}"
+      if price && !price.zero?
+        out << ("." * (50 - out.size))
+        out << "$ %.3f" % price
+        out << " ($ %.3f)" % (price * qty) if qty != 1
+      end
+      out
     end
 
     def qty=(v)
       @qty = v
     end
 
+    def price=(pr)
+      @price = pr.kind_of?(Numeric) ? pr : pr.gsub(",", ".").to_f
+    end
 
-    def self.create_or_increment(name, q)
+    def self.create_or_increment(q, name, pr=0)
       part = search(name, true) || new(name)
       part.qty += q.to_i
+      part.price = pr
       part.save
       part
     end
@@ -39,6 +50,12 @@ module Stockr
       else
         nil
       end
+    end
+
+    def self.all;      search('');    end
+
+    def self.list(txt = "*")
+      search(txt).map(&:facts) rescue []
     end
 
 

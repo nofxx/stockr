@@ -1,9 +1,22 @@
 = stockr
 
-Description goes here.
+
+Keep your stock up to date.
+With easy bash editing, and web view.
+Exports to a bunch of formats too.
+
+
+== Use
+
+
+    stockr +5 LM358
+    stockr -2 LM358
+    stockr LM358
+    > 3x LM358
+
 
 == Contributing to stockr
- 
+
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
 * Fork the project
