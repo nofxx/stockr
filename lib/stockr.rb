@@ -9,6 +9,12 @@ module Stockr
 
   FORMATS = %w{ txt csv html pdf xml }
 
+  def self.print_parts(res)
+    return "Not found... go shop!" unless res && !res.empty?
+    res.map(&:facts).join("\n")
+
+  end
+
 
   def self.work(txt)
     txt = txt.split(" ") unless txt.is_a? Array
@@ -18,6 +24,7 @@ module Stockr
     when "web" then
       puts "Starting websever on port."
       require "stockr/web"
+    when "shop" then print_parts(Part.missing)
     else
       if parse.size == 1
         if parse.join =~ /#{FORMATS.join('|')}/
@@ -25,9 +32,7 @@ module Stockr
           "File saved! #{f}"
         else
           puts "Searching...#{txt.join}"
-          res = Part.search(txt.join.upcase)
-          return "Not found... go shop!" unless res && !res.empty?
-          res.map(&:facts).join("\n")
+          print_parts Part.search(txt.join.upcase)
         end
       else
         if part = Part.create_or_increment(*parse)

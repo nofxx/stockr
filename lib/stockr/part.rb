@@ -58,6 +58,9 @@ module Stockr
       search(txt).map(&:facts) rescue []
     end
 
+    def self.missing
+      all.select { |p| p.qty <= 0 }
+    end
 
   end
 

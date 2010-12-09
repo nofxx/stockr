@@ -32,6 +32,12 @@ describe "Stockr" do
     run("2 LM447").should eql("Done. 0x LM447")
   end
 
+  it "should list missing parts" do
+    run("-2 LM447").should eql("Done. -2x LM447")
+    run("2 LM448").should eql("Done. 2x LM448")
+    run("shop").should eql("-2x LM447")
+  end
+
   it "should add prices to parts" do
     run("1 LM447 0.50").should eql("Done. 1x LM447..........................................$ 0.500")
   end
