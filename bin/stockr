@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+require 'rubygems'
+require 'stockr'
+
+if Time.now.saturday?
+  puts "GEEK!"
+end
+
+if ARGV.empty?
+  puts <<EOF
+
+                   +[ Stockr ]-
+
+Use:
+
+    stockr +5 LM358
+    stockr -2 LM358
+    stockr LM358
+    > 3x LM358
+
+
+EOF
+else
+  puts Stockr.work(ARGV)
+end

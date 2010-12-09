@@ -7,6 +7,10 @@ require 'stockr'
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
+
 RSpec.configure do |config|
-  
+
+  config.before(:each) do
+    Redis.new.flushall
+  end
 end
