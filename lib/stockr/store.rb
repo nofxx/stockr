@@ -17,7 +17,7 @@ module Stockr
       def find(txt)
         res = db.keys(txt)
         return nil if res.empty?
-        res.reduce({}) { |h, r| h.merge(r => db.hgetall(r)) }
+        res.sort.reduce({}) { |h, r| h.merge(r => db.hgetall(r)) }
       end
 
       def write(key, values)

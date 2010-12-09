@@ -1,15 +1,17 @@
+
 require "sinatra"
-include Stockr
-# unless const_defined?("Stockr")
-
-#   require "stockr"
-
-get '/hi' do
-  "Hello World!"
+unless Module.const_defined?("Stockr")
+  $LOAD_PATH.unshift(File.join(File.dirname(__FILE__) + "/../"))
+  require "stockr"
 end
+include Stockr
+
 
 get '/' do
-  @parts = Part.all
+  parts = Part.all
+  @parts = parts.map(&:to_json)
+  @sum = parts.reduce(0) { |n, p| n += p.price_total }
+  p @parts
   erb <<INDEX
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html class="cufon-active cufon-ready"><head>
@@ -17,13 +19,10 @@ get '/' do
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Stockr : My Stock</title>
-    <!--[if IE]><link rel="stylesheet" type="text/css" href="../css/tripoli.simple.ie.css" /><![endif]-->
-    <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="../css/ie6ie7.css" /><![endif]-->
-    <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="../css/ie6.css" /><![endif]-->
-    <script type="text/javascript" src="knockout.js"></script>
+    <script type="text/javascript" src="bundle.js"></script>
 
-              <style type="text/css">
-/* Tripoli overrides */
+    <style type="text/css">
+/* CSS ************************************************************************/
 .content { font-size: 1.1em !important; }
 .content p + ul { margin-top: -0.8em; }
 .sticker .content h1 { font-size: 1.6em; margin: 0.4em 0 0.4em 0; }
@@ -34,23 +33,6 @@ get '/' do
 
 /* Basics */
 a { text-decoration: none; }
-code { font-family: Consolas, Monaco, "Courier New", mono-space, monospace !important; }
-.content .syntaxhighlighter table, .content .syntaxhighlighter td { border-width: 0; }
-.content .syntaxhighlighter table { margin-bottom: 0; }
-.syntaxhighlighter {
-  width: 680px; overflow-x: auto; margin-bottom: 1.8em;
-  -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; border-radius: 0.5em;
-}
-.syntaxhighlighter .line {
-    white-space: pre !important;
-    line-height: 1.2em;
-}
-.syntaxhighlighter code {
-    white-space: pre !important;
-}
-.syntaxhighlighter.ie {
-  overflow-y: hidden;
-}
 
 .center { text-align: center }
 .left { text-align: left }
@@ -70,19 +52,11 @@ code { font-family: Consolas, Monaco, "Courier New", mono-space, monospace !impo
 .inline { display: inline; }
 .cursor { cursor: pointer }
 
-ul.tickIcons li { list-style-type: none;
-  background-image: url(../img/checkIcon.gif); background-repeat: no-repeat; background-position: 0px 6px;
-  margin-left: -0.5em; padding-left: 2em; line-height: 2em; margin-bottom: 0.3em;
-}
-
-li p.smallprint { margin-top: -0.25em; line-height: 1.4em; font-size: 0.9em; margin-bottom: 0.9em; font-style: italic; color: #444; }
-
-ul.stickerList li { margin: 0.5em 0 0.9em 0; }
-ul.stickerList li p.smallprint { margin-top: 0.1em; }
+.small { margin-top: -0.25em; line-height: 1.4em; font-size: 0.8em; margin-bottom: 0.9em; font-style: italic; color: #444; }
 
 /* Page */
 #wrapper {margin: 0 auto; width: 982px; }
-html { background: #d05400 url(../img/main-background.jpg) no-repeat top center; }
+html { background: #d05400 no-repeat top center; }
 body { font-family: arial; font-size: 14px; }
 .sticker {
   background-color: white; padding: 1.25em 1.45em 1.25em 1.55em; margin: 0.5em 0 3em 0; -moz-border-radius: 1em; -webkit-border-radius: 1em; border-radius: 1em;
@@ -96,14 +70,10 @@ body { font-family: arial; font-size: 14px; }
   border-top-right-radius: 1em; border-top-left-radius: 1em;
 }
 
-.engraved {
-  color: #350808;
-  text-shadow: rgba(253, 204, 197, 0.4) 1px 1px 0px;
-}
-
+.engraved {  color: #350808;  text-shadow: rgba(253, 204, 197, 0.4) 1px 1px 0px;}
 .vspace { height: 2em;}
 
-.liveExample { padding: 1em; background-color: #EEEEDD; border: 1px solid #CCC; max-width: 655px; }
+.liveExample { padding: 1em; background-color: #EEEEDD; border: 1px solid #CCC; max-width: 98%; }
 .liveExample input { font-family: Arial; }
 .liveExample b { font-weight: bold; }
 .liveExample p { margin-top: 0.9em; margin-bottom: 0.9em; }
@@ -123,47 +93,20 @@ body { font-family: arial; font-size: 14px; }
 /* Intro */
 #introBadges li { width: 215px; float:left; text-align: center; padding: 0 0.5em 0 0.5em; color: #555; margin-bottom: 0.5em; }
 
-/* Homepage */
-#slogan {
-  float:right; width: 17em;
-  padding-left: 1.4em;
-  background: url(../img/vertical-bar.png) no-repeat;
-  font-size: 20px;
-  margin-bottom: 0.6em;
-}
-
-.download-button {
-  background: url(../img/download-button-bg.png);
-  width: 173px; height: 51px;
-  display: block;
-  margin-top: 0.6em;
-}
-.download-button p {
-  color: #005500;
-  font-size: 17px;
-  padding: 0.6em 0 0 9px;
-}
-.download-button p.smallprint {
-  font-size: 12px;
-  padding: 0.1em 0 0 11px;
-}
-.download-button:hover p { text-decoration: underline; }
-
-
-.homepageExample h2 { margin: 0.75em 0 0.5em 0;}
-.homepageExample .liveExample { padding: 0.5em 1em 0.5em 1.3em; }
-.homepageExample .liveExample button { padding: 0.2em 0.6em; margin-left: 0.5em; }
-.homepageExample p { margin: 1.3em 0 0.8em 0; }
 
 /* Footer */
 #page-footer { padding: 15px; text-align: right; }
 
-                .liveExample table, .liveExample td, .liveExample th { padding: 0.2em; border-width: 0; }
-                .liveExample td input { width: 13em; }
-                tr { vertical-align: top; }
-                .liveExample input.error { border: 1px solid red; background-color: #FDC; }
-                .liveExample label.error { display: block; color: Red; font-size: 0.8em; }
-              </style>
+.liveExample table, .liveExample td, .liveExample th { padding: 0.2em; border-width: 0; }
+.liveExample td input { width: 13em; }
+tr { vertical-align: top; }
+.liveExample input.error { border: 1px solid red; background-color: #FDC; }
+.liveExample label.error { display: block; color: Red; font-size: 0.8em; }
+
+/* CSS ****************************************************************************/
+
+</style>
+
 
   </head><body>
     <div id="wrapper">
@@ -172,14 +115,14 @@ body { font-family: arial; font-size: 14px; }
           <div class="sticker">
             <div class="content">
 
-              <script src="gridEditor_files/jquery_002.js" type="text/javascript"> </script><h2>My Stock</h2><div class="liveExample">
-
-                <form action="/someServerSideHandler">
-                  <p>You have asked for <span data-bind="text: parts().length">2</span> part(s)</p>
+                <h2>My Stock - <%= Time.now %> </h2>
+                <div class="liveExample">
+                <form action="/up">
                   <table data-bind="visible: parts().length &gt; 0">
                     <thead>
                       <tr>
-                        <th>Part name</th>
+                        <th>Qty</th>
+                        <th>Name</th>
                         <th>Price</th>
                         <th>
                         </th></tr>
@@ -189,27 +132,27 @@ body { font-family: arial; font-size: 14px; }
 
                   <button data-bind="click: addPart">Add Part</button>
                   <button data-bind="enable: parts().length &gt; 0" type="submit">Submit</button>
+                  <p>We got <span data-bind="text: parts().length">2</span> part(s). $ <%= @sum %> </p>
                 </form>
 
-                <script id="partRowTemplate" type="text/html">
-                  <tr>
-                    <td>{{ko_code ((function() { return ko.templateRewriting.applyMemoizedBindingsToNextSibling(function() {                     return (function() { return { value: name, uniqueName: true, '_ko_property_writers' : { value : function(__ko_value) { name = __ko_value; } }  } })()                 }) })()) }}<input class='required'  /></td>
-                    <td>{{ko_code ((function() { return ko.templateRewriting.applyMemoizedBindingsToNextSibling(function() {                     return (function() { return { value: price, uniqueName: true, '_ko_property_writers' : { value : function(__ko_value) { price = __ko_value; } }  } })()                 }) })()) }}<input class='required number'  /></td>
-                    <td>{{ko_code ((function() { return ko.templateRewriting.applyMemoizedBindingsToNextSibling(function() {                     return (function() { return { click: function() { viewModel.removePart($data) } } })()                 }) })()) }}<a href='#' >Delete</a></td>
-                  </tr>
-                </script>
+<script type="text/html" id="partRowTemplate">
+    <tr>
+        <td><input class="required number" data-bind="value: qty, uniqueName: true"/></td>
+        <td><input class="required" data-bind="value: name, uniqueName: true"/></td>
+        <td><input class="number" data-bind="value: price, uniqueName: true"/></td>
+        <td><span class="small" data-bind="text: total_price"></span></td>
+        <td><a href="#" data-bind="click: function() { viewModel.removePart($data) }">Delete</a></td>
+    </tr>
+</script>
 
 
                 <script type="text/javascript">
                   /*<![CDATA[*/
     var viewModel = {
-        parts: ko.observableArray([
-            <!-- { name: "Tall Hat", price: "39.95" }, -->
-            <!-- { name: "Long Cloak", price: "120.00" } -->
-        ]),
+        parts: ko.observableArray([<%= @parts.join(',') %>]),
 
         addPart: function () {
-            this.parts.push({ name: "", price: "" });
+            this.parts.push({ qty: "", name: "", price: "", total_price: "" });
         },
 
         removePart: function (part) {
@@ -217,8 +160,8 @@ body { font-family: arial; font-size: 14px; }
         },
 
         save: function (form) {
-            alert("Could now transmit to server: " + ko.utils.stringifyJson(this.parts));
-            // To transmit to server, write this: ko.utils.postJson($("form")[0], this.parts);
+            //lert("Could now transmit to server: " + ko.utils.stringifyJson(this.parts));
+            ko.utils.postJson($("form")[0], this.parts);
         }
     };
 
@@ -248,18 +191,7 @@ body { font-family: arial; font-size: 14px; }
 
 
 <br><br><br><br>
-%h1 Stockr List
 
-%table
-  %tr
-    %th Name
-    %th Qty
-    %th Price
-  - for pr in @parts
-    %tr
-      %td= pr.name
-      %td= pr.qty
-      %td= pr.price
 
 Total:
 
@@ -270,13 +202,10 @@ get '/new' do
   haml :new
 end
 
-get '/knockout.js' do
-  File.open(File.dirname(__FILE__) + "/assets/knockout.js")
+get '/bundle.js' do
+  File.open(File.dirname(__FILE__) + "/assets/bundle.js")
 end
 
-get '/up' do
-  "..."
-end
 
 get '/:id' do
   @part = Part.find(params[:id])
@@ -287,6 +216,20 @@ get '/:id' do
   end
 end
 
+
+post '/up' do
+  params.each do |id, data|
+    data.gsub!(/\\|\"/, "")
+    # just to not require json and play
+    attrs = [:qty, :name, :price].map { |a| data.match(/\{?\s?(#{a})\s?:\s?(\w*)}?/)[2] }
+    p attrs
+    Part.find_or_create(*attrs)
+  end
+  "..."
+  redirect '/'
+end
+
+
 post '/' do
   @part = Part.new(:distance => params[:distance], :minutes => params[:minutes])
   if @part.save
@@ -296,5 +239,5 @@ post '/' do
   end
 end
 
-Sinatra::Application.run!
+# Sinatra::Application.run!
 

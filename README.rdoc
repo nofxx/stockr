@@ -14,6 +14,73 @@ Exports to a bunch of formats too.
     stockr LM358
     > 3x LM358
 
+=== Shop List
+
+If stock goes under 1, shows how many of that item we need, so just ask for shop:
+
+    stockr -2 ATMEGA8
+    stockr shop
+    >2x ATMEGA8
+
+
+=== Web View
+
+     stockr web
+
+=== Import formats
+
+     stockr [file]
+
+
+
+=== Export formats
+
+     stockr [format]
+
+Available: txt, csv, pdf, html, xml.
+
+
+
+
+== Usar
+
+sudo gem install stockr
+
+(No linux eh soh instalar o ruby e redis e rodar isso)
+
+Como funfa:
+
+     stockr +5 LM358
+     stockr +2 LM1117
+
+Dae tu vai, usa um LM em um circ:
+
+     stockr -1 LM1117
+
+Opa, q q eu tenho de lm?
+
+      stockr LM
+
+      > 5x LM358
+      > 1x LM1117
+
+
+=== Shop List
+Outra opcao eh colocar coisas negativas, ou qdo chegar em valor negativo, vc chama:
+
+stockr shop
+
+Vem a lista de coisas faltando...
+
+Tem tb `stockr web` q abre o ffox o estoque pra editar visualmente.
+
+Vc pode por preco tb e calcula tudo...
+
+Ah e tb `stockr [FORMATO]` exporta seu estoque. FORMATO podendo ser txt, csv, pdf, html.....
+Sugestoes/duvidas to ae.
+
+
+
 
 == Contributing to stockr
 

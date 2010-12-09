@@ -12,6 +12,7 @@ module Stockr
     end
 
     def save
+      return false unless name && !name.empty?
       Store.write(name, { :qty => qty, :price => price })
     end
 
@@ -30,21 +31,34 @@ module Stockr
     end
 
     def price=(pr)
-      @price = pr.kind_of?(Numeric) ? pr : pr.gsub(",", ".").to_f
+      # BigDecimal.new()
+      @price = pr.kind_of?(Numeric) ? pr.to_f : pr.gsub(",", ".").to_f
     end
 
-    def self.create_or_increment(q, name, pr=0)
+    def price_total
+      price * qty
+    end
+
+    def to_json
+      "{name: '#{name}', qty: '#{qty}', price: '%.3f', total_price: '%.3f'}" % [price, price_total]
+    end
+
+    def self.find_or_create(q, name, pr=0, incr = false)
       part = search(name, true) || new(name)
-      part.qty += q.to_i
+      incr ? part.qty += q.to_i : part.qty = q.to_i
       part.price = pr
       part.save
       part
     end
 
+    def self.create_or_increment(q, name, pr=0)
+      find_or_create(q, name, pr, true)
+    end
+
     def self.search(txt, exact = false)
       if res = Store.find(exact ? txt : "*#{txt}*")
         objs = res.map do |k, r|
-          new(k, r["qty"])
+          new(k, r["qty"], r["price"])
         end
         exact ? objs[0] : objs # FIXME: better way?
       else
@@ -61,6 +75,7 @@ module Stockr
     def self.missing
       all.select { |p| p.qty <= 0 }
     end
+
 
   end
 
