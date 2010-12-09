@@ -10,7 +10,7 @@ module Stockr
     class << self
 
       def all
-        @all ||= Part.search("")
+        @all ||= Part.search("") || []
       end
 
       def timestamp

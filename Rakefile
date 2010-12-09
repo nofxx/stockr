@@ -15,8 +15,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "stockr"
   gem.homepage = "http://github.com/nofxx/stockr"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Keep track of all your stuff}
+  gem.description = %Q{Help keep track of stuff (good for electronics)}
   gem.email = "x@nofxx.com"
   gem.authors = ["Marcos Piccinini"]
 
