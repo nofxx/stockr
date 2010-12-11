@@ -20,7 +20,8 @@ module Stockr
         @ts ||= Time.now.strftime("%y-%m-%d-%H-%M-%S")
       end
 
-      def format
+      def format(data = Part.all)
+        return "Nada." unless data && !data.empty?
         <<TXT
 #
 #  Stockr Export
@@ -29,11 +30,10 @@ module Stockr
 #
 ---------------------------------------------------------------------
 
-#{Part.list.join("\n")}
+#{data.map(&:line).join("\n")}
 
 ---------------------------------------------------------------------
-Total: #{all.size} Part(s).
-$ #{Part.sum}
+Total: #{data.size} Part(s).                                    #{Part.sum(data)}
 
 TXT
       end

@@ -239,5 +239,5 @@ post '/' do
   end
 end
 
-# Sinatra::Application.run!
+Sinatra::Application.run!
 

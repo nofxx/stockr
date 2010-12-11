@@ -7,8 +7,10 @@ Some fancy stuff, oh, and it exports to a bunch of formats too.
 
 == Use
 
+    stockr quantity name package and/or price
 
-    stockr +5 LM358
+
+    stockr 5 LM358
     > 5x LM358
 
     stockr -2 LM358
@@ -17,11 +19,11 @@ Some fancy stuff, oh, and it exports to a bunch of formats too.
     stockr LM
     > 3x LM358
 
+    stockr 2 LM338 DIP
+    stockr 2 LM338 0.50
+    stockr 2 LM338 SMD 0.50
+    ...
 
-Prices too:
-
-    stockr 10 LM7805 0.95
-    > 10x LM7805 0.95 (9.50)
 
 === Web View
 

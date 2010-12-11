@@ -14,11 +14,6 @@ module Stockr
 #  TECHUB  = "http://techub.heroku.com"
   TECHUB  = "http://localhost:3000"
 
-  def self.print_parts(res)
-    return "Not found... go shop!" unless res && !res.empty?
-    res.map(&:facts).join("\n")
-
-  end
 
   def self.get_user
     unless File.exists?(DOTFILE)
@@ -39,8 +34,9 @@ module Stockr
         "File saved! #{f}"
       else
         puts "Searching...#{txt.join}"
-        print_parts parts = Part.search(txt.join.upcase)
-        parts
+        res = Part.search(txt.join.upcase)
+        puts (res && !res.empty?) ? Export.format(res) : "Not found... go shop!"
+        res
       end
     else
       if part = Part.create_or_increment(*txt)
@@ -61,7 +57,7 @@ module Stockr
     when "web" then
       puts "Starting websever on port."
       require "stockr/web"
-    when "shop" then print_parts(Part.missing)
+    when "shop" then puts Export.format(Part.missing)
     when /load.*/ then Import.from_file txt[1] #ARGF
     when /pull.*/ then Import.from_web
     when /push.*/ then Export.to_web

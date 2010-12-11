@@ -1,13 +1,14 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "Stockr" do
+  include Stockr
 
   def find(t)
-    Stockr::Part.find(t)
+    Part.find(t)
   end
 
   it "should add parts" do
-    run("2 LM358").should be_a Stockr::Part
+    run("2 LM358").should be_a Part
     run("LM358").should have(1).part
   end
 
@@ -22,14 +23,14 @@ describe "Stockr" do
   it "should increment existing parts" do
     run("2 ATMEGA32").name.should eql("ATMEGA32")
     run("2 ATMEGA32").qty.should eql(4)
-    Stockr::Part.all.size.should eql(1)
+    Part.all.size.should eql(1)
     find("ATMEGA32").qty.should eql(4)
   end
 
   it "should decrement existing parts" do
     run("4 LM447")
     run("-2 LM447")
-    Stockr::Part.all.size.should eql(1)
+    Part.all.size.should eql(1)
     find("LM447").qty.should eql(2)
   end
 
@@ -44,12 +45,10 @@ describe "Stockr" do
     find("LM447").qty.should be_zero
   end
 
-  it "should list missing parts" do
-    run("-2 LM447")
-    run("2 LM448")
-    run("shop").should eql("-2x LM447  $ 0.000 ($ -0.000)")
+  it "should add pkgs to parts" do
+    run("2 LM338 DIP").pkg.should eql("DIP")
+    run("2 LM338 DIP").price.should be_zero
   end
-
 
   it "should add prices to parts" do
     run("1 LM447 1.50").price.should be_within(0.1).of(1.5)

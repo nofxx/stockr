@@ -20,7 +20,7 @@ module Stockr
     end
 
     def line
-      out = "#{qty}#{' ' * (5-qty.to_s.size)}x  #{name}  "
+      out = "#{qty}#{' ' * (5-qty.to_s.size)}x  #{name} #{pkg} "
       if price && !price.zero?
         out << ("." * (50 - out.size))
         out << CASH % price
@@ -56,8 +56,8 @@ module Stockr
 
     class << self
 
-      def sum
-        CASH % search("*").reduce(0) { |i, p| i += p.price_total }
+      def sum(ary = search("*"))
+        CASH % ary.reduce(0) { |i, p| i += p.price_total }
       end
 
       def find_or_create(q, name, pr=0, incr = false)
