@@ -22,5 +22,7 @@ Use:
 
 EOF
 else
-  puts Stockr.work(ARGV)
+  params = ARGV.dup
+  ARGV.clear
+  Stockr.work(params)
 end

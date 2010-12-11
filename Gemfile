@@ -2,6 +2,8 @@
 # Stockr Gems
 #
 gem "redis"
+gem "eletro"
+gem "multipart-post"
 
 group :development do
   gem "sinatra"

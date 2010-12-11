@@ -20,7 +20,8 @@ Jeweler::Tasks.new do |gem|
   gem.email = "x@nofxx.com"
   gem.authors = ["Marcos Piccinini"]
 
-  gem.add_runtime_dependency 'redis'
+  # DEPRECATED?
+  #  gem.add_runtime_dependency 'redis'
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   #  gem.add_runtime_dependency 'jabber4r', '> 0.1'

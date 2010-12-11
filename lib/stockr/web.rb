@@ -11,7 +11,7 @@ get '/' do
   parts = Part.all
   @parts = parts.map(&:to_json)
   @sum = parts.reduce(0) { |n, p| n += p.price_total }
-  p @parts
+
   erb <<INDEX
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html class="cufon-active cufon-ready"><head>

@@ -3,7 +3,10 @@
 module Stockr
 
   class Part
-    attr_reader :name, :qty, :price
+
+    attr_reader :name, :qty, :price, :pkg, :kind
+
+    CASH = "$ %.3f"
 
     def initialize(name, qty = 0, pr = 0)
       @name = name.upcase
@@ -13,21 +16,29 @@ module Stockr
 
     def save
       return false unless name && !name.empty?
-      Store.write(name, { :qty => qty, :price => price })
+      Store.write(name, { :qty => qty, :price => price, :pkg => pkg })
     end
 
-    def facts
-      out = "#{qty}x #{name}"
+    def line
+      out = "#{qty}#{' ' * (5-qty.to_s.size)}x  #{name}  "
       if price && !price.zero?
         out << ("." * (50 - out.size))
-        out << "$ %.3f" % price
-        out << " ($ %.3f)" % (price * qty) if qty != 1
+        out << CASH % price
+        out << " ($ %.3f)" % (price * qty) #if qty != 1
       end
       out
     end
 
+    def facts
+      out = "#{qty}x #{name} #{pkg} #{CASH} (#{CASH})" % [price, price_total]
+    end
+
     def qty=(v)
       @qty = v
+    end
+
+    def pkg=(p)
+      @pkg = p
     end
 
     def price=(pr)
@@ -43,37 +54,53 @@ module Stockr
       "{name: '#{name}', qty: '#{qty}', price: '%.3f', total_price: '%.3f'}" % [price, price_total]
     end
 
-    def self.find_or_create(q, name, pr=0, incr = false)
-      part = search(name, true) || new(name)
-      incr ? part.qty += q.to_i : part.qty = q.to_i
-      part.price = pr
-      part.save
-      part
-    end
+    class << self
 
-    def self.create_or_increment(q, name, pr=0)
-      find_or_create(q, name, pr, true)
-    end
-
-    def self.search(txt, exact = false)
-      if res = Store.find(exact ? txt : "*#{txt}*")
-        objs = res.map do |k, r|
-          new(k, r["qty"], r["price"])
-        end
-        exact ? objs[0] : objs # FIXME: better way?
-      else
-        nil
+      def sum
+        CASH % search("*").reduce(0) { |i, p| i += p.price_total }
       end
-    end
 
-    def self.all;      search('');    end
+      def find_or_create(q, name, pr=0, incr = false)
+        part = search(name, true) || new(name)
+        incr ? part.qty += q.to_i : part.qty = q.to_i
+        if pr =~ /\d/
+          part.price = pr
+        else
+          part.pkg = pr
+        end
+        part.save
+        part
+      end
 
-    def self.list(txt = "*")
-      search(txt).map(&:facts) rescue []
-    end
+      def create_or_increment(q, name, pr=0)
+        find_or_create(q, name, pr, true)
+      end
 
-    def self.missing
-      all.select { |p| p.qty <= 0 }
+      def search(txt, exact = false)
+        if res = Store.find(exact ? txt : "*#{txt}*")
+          objs = res.map do |k, r|
+            new(k, r["qty"], r["price"])
+          end
+          exact ? objs[0] : objs # FIXME: better way?
+        else
+          nil
+        end
+      end
+
+      def all;      search('');    end
+
+      def list(txt = "*")
+        search(txt).map(&:line) rescue []
+      end
+
+      def find(txt)
+        search(txt, true)
+      end
+
+      def missing
+        all.select { |p| p.qty <= 0 }
+      end
+
     end
 
 
